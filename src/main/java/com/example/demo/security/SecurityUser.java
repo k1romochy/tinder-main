@@ -30,15 +30,9 @@ public class SecurityUser implements UserDetails {
     
     @Override
     public String getUsername() {
-        // Всегда возвращаем email как имя пользователя для Security
         return user.getEmail();
     }
-    
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-    
+
     @Override
     public boolean isAccountNonLocked() {
         return true;

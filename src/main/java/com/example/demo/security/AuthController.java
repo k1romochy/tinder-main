@@ -57,10 +57,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody AuthRequest request, HttpServletResponse response) {
         try {
-            // Записываем email из запроса для отладки
             logger.debug("Попытка входа с email: {}", request.getEmail());
-            
-            // Проверяем наличие пользователя перед попыткой аутентификации
+
             Optional<User> userOptional = userRepository.findByEmailOrName(request.getEmail());
             if (userOptional.isEmpty()) {
                 logger.error("Пользователь не найден: {}", request.getEmail());
@@ -77,8 +75,7 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             
             SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
-            
-            // Логируем информацию о пользователе для отладки
+
             logger.debug("Пользователь аутентифицирован: id={}, email={}, name={}", 
                 user.getId(), user.getEmail(), user.getName());
             
