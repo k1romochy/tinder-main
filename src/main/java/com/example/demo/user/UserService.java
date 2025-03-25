@@ -1,17 +1,20 @@
 package com.example.demo.user;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserService {
     private final UserRepository userRepository;
 
     private final RedisTemplate<String, User> userRedisTemplate;
 
+    @Autowired
     public UserService(UserRepository userRepository, RedisTemplate<String, User> userRedisTemplate) {
         this.userRedisTemplate = userRedisTemplate;
         this.userRepository = userRepository;

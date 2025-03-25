@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 
 @Configuration
-@EnableRedisRepositories(basePackages = "com.example.demo.user.repository")
+@EnableRedisRepositories(basePackages = "com.example.demo.user")
 @EnableCaching
 public class RedisConfig {
 
