@@ -40,8 +40,6 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/error/**").permitAll()
-                .requestMatchers("/items/", "/items/{id}/").permitAll()
-                .requestMatchers("/orders/**").authenticated()
                 .requestMatchers("/users/**").authenticated()
                 .anyRequest().authenticated()
             )

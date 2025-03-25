@@ -91,7 +91,7 @@ public class AuthController {
         User savedUser = userRepository.save(user);
         
         String redisKey = "user:" + savedUser.getId();
-        userRedisTemplate.opsForValue().set(redisKey, savedUser, 21, TimeUnit.DAYS);
+        userRedisTemplate.opsForValue().set(redisKey, savedUser, 30, TimeUnit.DAYS);
 
         return ResponseEntity.ok("User registered successfully!");
     }

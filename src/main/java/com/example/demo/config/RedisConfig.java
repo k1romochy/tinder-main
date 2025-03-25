@@ -87,24 +87,7 @@ public class RedisConfig {
         template.afterPropertiesSet();
         return template;
     }
-    
-    @Bean
-    public RedisTemplate<String, Item> itemRedisTemplate(
-            RedisConnectionFactory connectionFactory, 
-            @Qualifier("redisObjectMapper") ObjectMapper redisObjectMapper) {
-        RedisTemplate<String, Item> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-        
-        Jackson2JsonRedisSerializer<Item> serializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper, Item.class);
-        
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(serializer);
-        template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(serializer);
-        
-        template.afterPropertiesSet();
-        return template;
-    }
+
 
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {

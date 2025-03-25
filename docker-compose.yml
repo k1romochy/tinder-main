@@ -14,7 +14,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/javademo
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/tinder
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=Egor100209
       - SPRING_REDIS_HOST=redis
