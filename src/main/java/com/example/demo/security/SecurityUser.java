@@ -30,6 +30,7 @@ public class SecurityUser implements UserDetails {
     
     @Override
     public String getUsername() {
+        // Всегда возвращаем email как имя пользователя для Security
         return user.getEmail();
     }
     
