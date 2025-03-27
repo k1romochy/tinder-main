@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.user.User;
+import com.example.demo.user.Repository.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -30,11 +30,11 @@ public class JwtService {
     @Value("${jwt.secret:defaultsecretkeydefaultsecretkeydefaultsecretkey}")
     private String secret;
     
-    @Value("${jwt.expiration:86400000}") // 24 часа в миллисекундах
+    @Value("${jwt.expiration:86400000}")
     private long jwtExpiration;
     
     private Key key;
-    
+
     @PostConstruct
     public void init() {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());

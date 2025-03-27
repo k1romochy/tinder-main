@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CookieValue;
 
-import com.example.demo.user.User;
-import com.example.demo.user.UserRepository;
+import com.example.demo.user.Repository.User;
+import com.example.demo.user.Repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

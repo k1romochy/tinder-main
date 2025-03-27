@@ -1,6 +1,6 @@
 package com.example.demo.config;
 
-import com.example.demo.user.User;
+import com.example.demo.user.Repository.User;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;

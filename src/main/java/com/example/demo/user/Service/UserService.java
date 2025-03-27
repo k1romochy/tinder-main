@@ -1,8 +1,10 @@
-package com.example.demo.user;
+package com.example.demo.user.Service;
 
 import java.util.List;
 import java.util.Set;
 
+import com.example.demo.user.Repository.User;
+import com.example.demo.user.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -29,6 +31,7 @@ public class UserService {
     public void deleteUserById(Long id) {
         if(userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
+            userRedisTemplate.delete("user"+id.toString());
         } else {
             throw new RuntimeException("User with this id not found");
         }

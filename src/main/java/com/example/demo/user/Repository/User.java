@@ -1,20 +1,14 @@
-package com.example.demo.user;
+package com.example.demo.user.Repository;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.example.demo.preferences.Repository.Preferences;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
@@ -37,6 +31,9 @@ public class User implements Serializable{
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Preferences preferences;
 
     public User() {
     }
@@ -99,5 +96,14 @@ public class User implements Serializable{
 
     public boolean hasRole(String role) {
         return this.roles.contains(role);
+    }
+
+    public void setPreferences(Preferences preferences) {
+        this.preferences = preferences;
+        preferences.setUser(this);
+    }
+
+    public Preferences getPreferences() {
+        return this.preferences;
     }
 }
