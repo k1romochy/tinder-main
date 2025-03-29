@@ -1,6 +1,7 @@
 package com.example.demo.preferences.Repository;
 
 import com.example.demo.user.Repository.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,7 +16,8 @@ public class Preferences {
     private short age_min;
     private short age_max;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "preferences", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
     public Preferences(Long id, String sex, short age_min, short age_max) {
@@ -27,7 +29,9 @@ public class Preferences {
 
     public Preferences() {}
 
-    public void setUser(User user) {this.user = user; }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Long getId() {
         return id;

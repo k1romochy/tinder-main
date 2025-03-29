@@ -18,7 +18,7 @@ public class PreferencesController {
         this.preferencesService = preferencesService;
     }
 
-    @PostMapping
+    @PostMapping("/save/")
     public Preferences setPreferences(@RequestBody Preferences preferences,
                                       @AuthenticationPrincipal SecurityUser securityUser) {
         preferencesService.savePreferences(preferences, securityUser);

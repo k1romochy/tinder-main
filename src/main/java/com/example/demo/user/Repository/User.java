@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.example.demo.preferences.Repository.Preferences;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.*;
@@ -32,7 +33,9 @@ public class User implements Serializable{
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "preferences_id", referencedColumnName = "id", nullable = true)
+    @JsonIgnore
     private Preferences preferences;
 
     public User() {
