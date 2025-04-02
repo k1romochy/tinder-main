@@ -36,4 +36,12 @@ public class Stack implements Serializable {
     public User getUser() {
         return user;
     }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
 }

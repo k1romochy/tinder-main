@@ -6,6 +6,7 @@ import com.example.demo.stack.StackMatchingDataUsers.StackMatchingData;
 import com.example.demo.stack.StackMatchingDataUsers.StackMatchingDataRepository;
 import com.example.demo.user.Repository.User;
 import com.example.demo.user.Repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,16 +31,19 @@ public class StackService {
     private final StackMatchingDataRepository stackMatchingDataRepository;
     private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
     private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final RedisTemplate<String, Stack> stackRedisTemplate;
 
     @Autowired
     public StackService(StackRepository stackRepository,
                         UserRepository userRepository,
                         KafkaTemplate<String, Object> kafkaTemplate,
-                        StackMatchingDataRepository stackMatchingDataRepository) {
+                        StackMatchingDataRepository stackMatchingDataRepository,
+                        RedisTemplate<String, Stack> stackRedisTemplate) {
         this.stackRepository = stackRepository;
         this.userRepository = userRepository;
         this.kafkaTemplate = kafkaTemplate;
         this.stackMatchingDataRepository = stackMatchingDataRepository;
+        this.stackRedisTemplate = stackRedisTemplate;
     }
 
     @KafkaListener(topics = "${kafka.topic.preferences}", groupId = "${spring.kafka.consumer.group-id}")
@@ -57,6 +62,7 @@ public class StackService {
         return userRepository.findCompatibleNearbyUsers(userId, point, minAge, maxAge);
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 3 * * ?")
     public void processingUserStacks() {
         List<StackMatchingData> stackMatchingData = stackMatchingDataRepository.findAll();
@@ -64,7 +70,14 @@ public class StackService {
             User user = matchingData.getUser();
             List<User> usersSuitableToUser = getAllUsersSuitableToUserPreferences(user.getId(), 2);
 
+            Stack stack = new Stack();
+            stack.setUsers(usersSuitableToUser);
 
+            String key = "UserStack:" + user.getId().toString();
+
+            stackRedisTemplate.opsForValue().set(key, stack);
+            stackRepository.save(stack);
+            stackMatchingDataRepository.delete(matchingData);
         }
     }
 }
