@@ -4,6 +4,8 @@ import com.example.demo.user.Repository.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import org.locationtech.jts.geom.Point;
+
 @Entity
 @Table
 public class Preferences {
@@ -11,20 +13,23 @@ public class Preferences {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String sex;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
-    private short age_min;
-    private short age_max;
+    @Enumerated(EnumType.STRING)
+    private Gender preferredGender;
+
+    private int age;
 
     @OneToOne(mappedBy = "preferences", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
-    public Preferences(Long id, String sex, short age_min, short age_max) {
+    public Preferences(Long id, String sex, short age, Gender gender, Gender preferredGender) {
         this.id = id;
-        this.sex = sex;
-        this.age_max = age_max;
-        this.age_min = age_min;
+        this.age = age;
+        this.gender = gender;
+        this.preferredGender = preferredGender;
     }
 
     public Preferences() {}
@@ -41,28 +46,28 @@ public class Preferences {
         this.id = id;
     }
 
-    public String getSex() {
-        return sex;
+    public void setAge(short age) {
+        this.age = age;
     }
 
-    public void setSex(String sex) {
-        this.sex = sex;
+    public int getAge() {
+        return age;
     }
 
-    public short getAgeMin() {
-        return age_min;
+    public void setGender(Gender gender) {
+        this.gender = gender;
     }
 
-    public void setAgeMin(short age_min) {
-        this.age_min = age_min;
+    public void setPreferredGender(Gender preferredGender) {
+        this.preferredGender = preferredGender;
     }
 
-    public short getAgeMax() {
-        return age_max;
+    public Gender getGender() {
+        return gender;
     }
 
-    public void setAgeMax(short age_max) {
-        this.age_max = age_max;
+    public Gender getPreferredGender() {
+        return preferredGender;
     }
 
     public User getUser() {

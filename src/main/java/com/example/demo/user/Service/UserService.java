@@ -1,10 +1,14 @@
 package com.example.demo.user.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import com.example.demo.user.Repository.User;
 import com.example.demo.user.Repository.UserRepository;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
     private final RedisTemplate<String, User> userRedisTemplate;
 
@@ -46,5 +51,11 @@ public class UserService {
     public List<User> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users;
+    }
+
+    public User saveUserLocation(Long userId, double lat, double lon) {
+        User user = findUserById(userId);
+        user.setPoint(geometryFactory.createPoint(new Coordinate(lon, lat)));
+        return userRepository.save(user);
     }
 }

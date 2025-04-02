@@ -5,11 +5,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.example.demo.preferences.Repository.Preferences;
+import com.example.demo.stack.Repositrory.Stack;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.*;
+import org.locationtech.jts.geom.Point;
 
 @Entity
 @Table(name = "users")
@@ -30,6 +33,9 @@ public class User implements Serializable{
     @Column
     private String password;
 
+    @Column(columnDefinition = "geometry(Point,4326)", nullable = true)
+    private Point point;
+
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
 
@@ -37,6 +43,11 @@ public class User implements Serializable{
     @JoinColumn(name = "preferences_id", referencedColumnName = "id", nullable = true)
     @JsonIgnore
     private Preferences preferences;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "stack_id", referencedColumnName = "id", nullable = true)
+    @JsonIgnore
+    private Stack stack;
 
     public User() {
     }
@@ -108,5 +119,22 @@ public class User implements Serializable{
 
     public Preferences getPreferences() {
         return this.preferences;
+    }
+
+    public void setStack (Stack stack) {
+        this.stack = stack;
+        stack.setUser(this);
+    }
+
+    public Stack getStack() {
+        return stack;
+    }
+
+    public void setPoint(Point point) {
+        this.point = point;
+    }
+
+    public Point getPoint() {
+        return this.point;
     }
 }
