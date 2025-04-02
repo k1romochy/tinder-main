@@ -13,6 +13,8 @@ public class StackMatchingData implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne
+    @JoinColumn(name="user_id", referencedColumnName = "id")
     private User user;
 
     public void setUser(User user) {

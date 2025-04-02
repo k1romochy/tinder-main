@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.example.demo.preferences.Repository.Preferences;
 import com.example.demo.stack.Repositrory.Stack;
+import com.example.demo.stack.StackMatchingDataUsers.StackMatchingData;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -48,6 +49,11 @@ public class User implements Serializable{
     @JoinColumn(name = "stack_id", referencedColumnName = "id", nullable = true)
     @JsonIgnore
     private Stack stack;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "stackMatchingData_id", referencedColumnName = "id", nullable = true)
+    @JsonIgnore
+    private StackMatchingData stackMatchingDatak;
 
     public User() {
     }

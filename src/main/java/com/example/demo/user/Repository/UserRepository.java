@@ -35,4 +35,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             @Param("minAge") int minAge,
             @Param("maxAge") int maxAge);
 
+    @Query("SELECT u FROM User u WHERE :active MEMBER OF u.roles")
+    List<User> findActiveUsers(@Param("active") String active);
+
 }

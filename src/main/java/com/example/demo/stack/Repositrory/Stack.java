@@ -15,7 +15,7 @@ public class Stack implements Serializable {
 
     private List<User> users;
 
-    @OneToOne(mappedBy = "stack", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 

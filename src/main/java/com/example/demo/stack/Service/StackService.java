@@ -6,6 +6,7 @@ import com.example.demo.stack.StackMatchingDataUsers.StackMatchingData;
 import com.example.demo.stack.StackMatchingDataUsers.StackMatchingDataRepository;
 import com.example.demo.user.Repository.User;
 import com.example.demo.user.Repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -46,11 +48,34 @@ public class StackService {
         this.stackRedisTemplate = stackRedisTemplate;
     }
 
+    @Scheduled(cron = "0 0 2 * * ?")
+    public void saveActiveUserToMatching() {
+        List<User> users = userRepository.findActiveUsers("active");
+        for (User user: users) {
+            StackMatchingData stackMatchingData = new StackMatchingData();
+            stackMatchingData.setUser(user);
+            stackMatchingDataRepository.save(stackMatchingData);
+        }
+    }
+
     @KafkaListener(topics = "${kafka.topic.preferences}", groupId = "${spring.kafka.consumer.group-id}")
-    public void saveMatchingData(User user) {
-        StackMatchingData stackMatchingData = new StackMatchingData();
-        stackMatchingData.setUser(user);
-        stackMatchingDataRepository.save(stackMatchingData);
+    public void getUserStackInTime(String userJson) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            User user = objectMapper.readValue(userJson, User.class);
+            List<User> usersSuitableToUser = getAllUsersSuitableToUserPreferences(user.getId(), 2);
+
+            Stack stack = new Stack();
+            stack.setUsers(usersSuitableToUser);
+            stack.setUser(user);
+
+            String key = "UserStack:" + user.getId().toString();
+
+            stackRedisTemplate.opsForValue().set(key, stack);
+            stackRepository.save(stack);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public List<User> getAllUsersSuitableToUserPreferences(Long userId, int ageDiff) {
@@ -72,6 +97,7 @@ public class StackService {
 
             Stack stack = new Stack();
             stack.setUsers(usersSuitableToUser);
+            stack.setUser(user);
 
             String key = "UserStack:" + user.getId().toString();
 
