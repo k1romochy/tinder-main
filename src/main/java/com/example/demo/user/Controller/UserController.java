@@ -20,11 +20,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("{id}/set_role/")
-    public Set<String> setUserRoleById(@PathVariable Long id, String role) {
-        return userService.setUserRoleById(id, role);
-    }
-
     @GetMapping("{id}/")
     public User geUserById(@PathVariable Long id) {
         return userService.findUserById(id);

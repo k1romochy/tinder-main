@@ -13,13 +13,18 @@ public class Stack implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private List<User> users;
+    private List<Long> usersMatchingID;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
     public Stack() {}
+
+    public Stack(Long id, List<Long> usersMatchingID) {
+        this.id = id;
+        this.usersMatchingID = usersMatchingID;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -37,11 +42,11 @@ public class Stack implements Serializable {
         return user;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public List<Long> getUsersMatchingID() {
+        return usersMatchingID;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setUsers(List<Long> users) {
+        this.usersMatchingID = users;
     }
 }

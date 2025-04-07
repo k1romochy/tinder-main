@@ -64,9 +64,11 @@ public class StackService {
         try {
             User user = objectMapper.readValue(userJson, User.class);
             List<User> usersSuitableToUser = getAllUsersSuitableToUserPreferences(user.getId(), 2);
+            List<Long> usersSuitableToUserIDs = usersSuitableToUser.stream().map(User::getId)
+                    .collect(Collectors.toList());
 
             Stack stack = new Stack();
-            stack.setUsers(usersSuitableToUser);
+            stack.setUsers(usersSuitableToUserIDs);
             stack.setUser(user);
 
             String key = "UserStack:" + user.getId().toString();
@@ -94,9 +96,11 @@ public class StackService {
         for (StackMatchingData matchingData: stackMatchingData) {
             User user = matchingData.getUser();
             List<User> usersSuitableToUser = getAllUsersSuitableToUserPreferences(user.getId(), 2);
+            List<Long> usersSuitableToUserIDs = usersSuitableToUser.stream().map(User::getId)
+                    .collect(Collectors.toList());
 
             Stack stack = new Stack();
-            stack.setUsers(usersSuitableToUser);
+            stack.setUsers(usersSuitableToUserIDs);
             stack.setUser(user);
 
             String key = "UserStack:" + user.getId().toString();

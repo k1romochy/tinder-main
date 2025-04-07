@@ -18,8 +18,8 @@ import org.locationtech.jts.geom.Point;
 @Entity
 @Table(name = "users")
 @JsonIdentityInfo(
-    generator = ObjectIdGenerators.PropertyGenerator.class,
-    property = "id")
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class User implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,8 +37,8 @@ public class User implements Serializable{
     @Column(columnDefinition = "geometry(Point,4326)", nullable = true)
     private Point point;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> roles = new HashSet<>();
+    @Column(name = "active", nullable = false, columnDefinition = "boolean default true")
+    private boolean active;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "preferences_id", referencedColumnName = "id", nullable = true)
@@ -63,7 +63,6 @@ public class User implements Serializable{
         this.email = email;
         this.name = name;
         this.password = password;
-        this.roles = new HashSet<>();
     }
 
     public Long getId() {
@@ -98,24 +97,12 @@ public class User implements Serializable{
         return password;
     }
 
-    public Set<String> getRoles() {
-        return roles;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
-    }
-
-    public void addRole(String role) {
-        this.roles.add(role);
-    }
-
-    public void removeRole(String role) {
-        this.roles.remove(role);
-    }
-
-    public boolean hasRole(String role) {
-        return this.roles.contains(role);
+    public boolean isActive() {
+        return active;
     }
 
     public void setPreferences(Preferences preferences) {

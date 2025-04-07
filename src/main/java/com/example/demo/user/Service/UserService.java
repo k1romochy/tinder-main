@@ -42,12 +42,6 @@ public class UserService {
         }
     }
 
-    public Set<String> setUserRoleById(Long id, String role) {
-        User user = findUserById(id);
-        user.addRole(role);
-        return user.getRoles();
-    }
-
     public List<User> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users;

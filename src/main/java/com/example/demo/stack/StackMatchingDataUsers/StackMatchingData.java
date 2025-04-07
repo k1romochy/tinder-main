@@ -17,6 +17,12 @@ public class StackMatchingData implements Serializable {
     @JoinColumn(name="user_id", referencedColumnName = "id")
     private User user;
 
+    public StackMatchingData() {}
+
+    public StackMatchingData(Long id) {
+        this.id = id;
+    }
+
     public void setUser(User user) {
         this.user = user;
     }

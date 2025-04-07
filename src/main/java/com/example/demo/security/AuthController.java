@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,15 +39,18 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final RedisTemplate<String, User> userRedisTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     
     public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
-            PasswordEncoder passwordEncoder, JwtService jwtService, RedisTemplate<String, User> userRedisTemplate) {
+            PasswordEncoder passwordEncoder, JwtService jwtService, RedisTemplate<String, User> userRedisTemplate,
+                          KafkaTemplate<String, Object> kafkaTemplate) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.userRedisTemplate = userRedisTemplate;
+        this.kafkaTemplate = kafkaTemplate;
     }
     private void syncUserData(User user) {
         String redisKey = "user:" + user.getId();
@@ -121,6 +125,7 @@ public class AuthController {
             
             String redisKey = "user:" + savedUser.getId();
             userRedisTemplate.opsForValue().set(redisKey, savedUser, 30, TimeUnit.DAYS);
+            kafkaTemplate.send("${kafka.topic.preferences}", savedUser);
 
             return ResponseEntity.ok("User registered successfully!");
         } catch (Exception e) {
