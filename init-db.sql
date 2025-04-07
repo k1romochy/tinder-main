@@ -9,32 +9,39 @@ $$;
 
 \c TinderMain;
 
-CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    active BOOLEAN DEFAULT TRUE
-);
-
 CREATE TABLE IF NOT EXISTS preferences (
     id SERIAL PRIMARY KEY,
     sex VARCHAR(10) NOT NULL,
     age_min SMALLINT NOT NULL,
-    age_max SMALLINT NOT NULL,
-    user_id BIGINT UNIQUE,
-    CONSTRAINT fk_user_preferences FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    age_max SMALLINT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS stack (
     id SERIAL PRIMARY KEY,
-    user_id BIGINT UNIQUE NOT NULL,
-    users_matching_id BIGINT[],
-    CONSTRAINT fk_user_stack FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    users_matching_id BIGINT[]
 );
 
 CREATE TABLE IF NOT EXISTS stack_matching_data (
-    id SERIAL PRIMARY KEY,
-    user_id BIGINT UNIQUE,
-    CONSTRAINT fk_user_stack_matching FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    id SERIAL PRIMARY KEY
 );
+
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255),
+    name VARCHAR(255),
+    password VARCHAR(255),
+    point geometry(Point,4326),
+    active BOOLEAN DEFAULT TRUE,
+    preferences_id BIGINT UNIQUE,
+    stack_id BIGINT UNIQUE,
+    stackMatchingData_id BIGINT UNIQUE
+);
+
+ALTER TABLE users
+    ADD CONSTRAINT fk_preferences FOREIGN KEY (preferences_id) REFERENCES preferences(id) ON DELETE CASCADE;
+
+ALTER TABLE users
+    ADD CONSTRAINT fk_stack FOREIGN KEY (stack_id) REFERENCES stack(id) ON DELETE CASCADE;
+
+ALTER TABLE users
+    ADD CONSTRAINT fk_stack_matching FOREIGN KEY (stackMatchingData_id) REFERENCES stack_matching_data(id) ON DELETE CASCADE;
