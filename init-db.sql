@@ -9,6 +9,8 @@ $$;
 
 \c TinderMain;
 
+CREATE EXTENSION IF NOT EXISTS postgis;
+
 CREATE TABLE IF NOT EXISTS preferences (
     id SERIAL PRIMARY KEY,
     sex VARCHAR(10) NOT NULL,
@@ -18,7 +20,7 @@ CREATE TABLE IF NOT EXISTS preferences (
 
 CREATE TABLE IF NOT EXISTS stack (
     id SERIAL PRIMARY KEY,
-    users_matching_id BIGINT[]
+    users_matching_id BIGINT[]  -- массив ID пользователей
 );
 
 CREATE TABLE IF NOT EXISTS stack_matching_data (
@@ -30,7 +32,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255),
     name VARCHAR(255),
     password VARCHAR(255),
-    point geometry(Point,4326),
+    point GEOMETRY(Point, 4326),
     active BOOLEAN DEFAULT TRUE,
     preferences_id BIGINT UNIQUE,
     stack_id BIGINT UNIQUE,
