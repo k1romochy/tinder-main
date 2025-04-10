@@ -118,7 +118,9 @@ public class AuthController {
                     request.getEmail(),
                     request.getName(),
                     passwordEncoder.encode(request.getPassword()));
-            
+
+            user.setActive(true);
+
             User savedUser = userRepository.save(user);
             logger.debug("Зарегистрирован пользователь: id={}, email={}, name={}", 
                 savedUser.getId(), savedUser.getEmail(), savedUser.getName());
