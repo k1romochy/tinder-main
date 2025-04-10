@@ -1,0 +1,2 @@
+docker exec -it tinder-redis redis-cli
+docker exec -it tinder-postgres psql -U postgres -d TinderMain
