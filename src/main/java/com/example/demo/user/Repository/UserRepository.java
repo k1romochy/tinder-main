@@ -28,7 +28,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "AND up.age BETWEEN :minAge AND :maxAge " +
             "AND up.gender = cp.preferredGender " +
             "AND cp.gender = up.preferredGender " +
-            "ORDER BY ST_Distance(u.location, :point) ASC")
+            "ORDER BY ST_Distance(u.point, :point) ASC")
     List<User> findCompatibleNearbyUsers(
             @Param("currentUserId") Long currentUserId,
             @Param("point") Point point,
