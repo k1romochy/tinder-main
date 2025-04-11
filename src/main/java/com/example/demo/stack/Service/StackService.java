@@ -21,6 +21,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import com.example.demo.preferences.Repository.Preferences;
 
 import java.util.List;
 import java.util.Optional;
@@ -59,23 +60,35 @@ public class StackService {
     }
 
     @KafkaListener(topics = "${kafka.topic.preferences}", groupId = "${spring.kafka.consumer.group-id}")
-    public void getUserStackInTime(String userJson) {
-        ObjectMapper objectMapper = new ObjectMapper();
+    public void getUserStackInTime(Preferences preferences) {
         try {
-            User user = objectMapper.readValue(userJson, User.class);
-            List<User> usersSuitableToUser = getAllUsersSuitableToUserPreferences(user.getId(), 2);
+            User user = preferences.getUser();
+            if (user == null || user.getId() == null) {
+                System.err.println("Получен объект Preferences без связанного пользователя или ID");
+                return;
+            }
+            
+            Optional<User> userOptional = userRepository.findById(user.getId());
+            if (!userOptional.isPresent()) {
+                System.err.println("Пользователь с ID " + user.getId() + " не найден в БД");
+                return;
+            }
+            
+            User fullUser = userOptional.get();
+            List<User> usersSuitableToUser = getAllUsersSuitableToUserPreferences(fullUser.getId(), 2);
             List<Long> usersSuitableToUserIDs = usersSuitableToUser.stream().map(User::getId)
                     .collect(Collectors.toList());
 
             Stack stack = new Stack();
             stack.setUsers(usersSuitableToUserIDs);
-            stack.setUser(user);
+            stack.setUser(fullUser);
 
-            String key = "UserStack:" + user.getId().toString();
+            String key = "UserStack:" + fullUser.getId().toString();
 
             stackRedisTemplate.opsForValue().set(key, stack);
             stackRepository.save(stack);
         } catch (Exception e) {
+            System.err.println("Ошибка при обработке сообщения из Kafka: " + e.getMessage());
             e.printStackTrace();
         }
     }

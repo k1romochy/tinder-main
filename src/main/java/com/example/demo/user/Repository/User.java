@@ -53,7 +53,7 @@ public class User implements Serializable{
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "stackMatchingData_id", referencedColumnName = "id", nullable = true)
     @JsonIgnore
-    private StackMatchingData stackMatchingDatak;
+    private StackMatchingData stackMatchingData;
 
     public User() {
     }
