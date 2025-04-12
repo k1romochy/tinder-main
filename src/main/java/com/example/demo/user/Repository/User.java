@@ -2,8 +2,10 @@ package com.example.demo.user.Repository;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import com.example.demo.like.Repository.Like;
 import com.example.demo.preferences.Repository.Preferences;
 import com.example.demo.stack.Repositrory.Stack;
 import com.example.demo.stack.StackMatchingDataUsers.StackMatchingData;
@@ -35,6 +37,7 @@ public class User implements Serializable{
     private String password;
 
     @Column(columnDefinition = "geometry(Point,4326)", nullable = true)
+    @JsonIgnore
     private Point point;
 
     @Column(name = "active", nullable = false, columnDefinition = "boolean default true")
@@ -54,6 +57,10 @@ public class User implements Serializable{
     @JoinColumn(name = "stackMatchingData_id", referencedColumnName = "id", nullable = true)
     @JsonIgnore
     private StackMatchingData stackMatchingData;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Like> likes;
 
     public User() {
     }
@@ -129,5 +136,13 @@ public class User implements Serializable{
 
     public Point getPoint() {
         return this.point;
+    }
+
+    public List<Like> getLikes() {
+        return this.likes;
+    }
+
+    public void setLikes(List<Like> likes) {
+        this.likes = likes;
     }
 }

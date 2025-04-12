@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -41,7 +42,10 @@ public class AuthController {
     private final RedisTemplate<String, User> userRedisTemplate;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-    
+
+    @Value("${kafka.topic.example}")
+    private String topicName;
+
     public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
             PasswordEncoder passwordEncoder, JwtService jwtService, RedisTemplate<String, User> userRedisTemplate,
                           KafkaTemplate<String, Object> kafkaTemplate) {
@@ -51,6 +55,7 @@ public class AuthController {
         this.jwtService = jwtService;
         this.userRedisTemplate = userRedisTemplate;
         this.kafkaTemplate = kafkaTemplate;
+
     }
     private void syncUserData(User user) {
         String redisKey = "user:" + user.getId();
@@ -127,7 +132,7 @@ public class AuthController {
             
             String redisKey = "user:" + savedUser.getId();
             userRedisTemplate.opsForValue().set(redisKey, savedUser, 30, TimeUnit.DAYS);
-            kafkaTemplate.send("${kafka.topic.preferences}", savedUser);
+            kafkaTemplate.send(topicName, savedUser);
 
             return ResponseEntity.ok("User registered successfully!");
         } catch (Exception e) {
