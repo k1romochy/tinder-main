@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import com.example.demo.like.Repository.Like;
 import com.example.demo.stack.Repositrory.Stack;
 import com.example.demo.user.Repository.User;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -97,6 +98,24 @@ public class RedisConfig {
         template.setConnectionFactory(connectionFactory);
 
         Jackson2JsonRedisSerializer<Stack> serializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper, Stack.class);
+
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(serializer);
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(serializer);
+
+        template.afterPropertiesSet();
+        return template;
+    }
+
+    @Bean
+    public RedisTemplate<String, Like> likeRedisTemplate(
+            RedisConnectionFactory connectionFactory,
+            @Qualifier("redisObjectMapper") ObjectMapper redisObjectMapper) {
+        RedisTemplate<String, Like> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+
+        Jackson2JsonRedisSerializer<Like> serializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper, Like.class);
 
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(serializer);
