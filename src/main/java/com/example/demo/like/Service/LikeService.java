@@ -33,14 +33,13 @@ public class LikeService {
 
     public Map<String, String> handleUserLike(Like like) {
         likeRepository.save(like);
-        String redisKey = "like:" + like.getUser().getId() + ":" + like.getUserTarget().getId();
+        String redisKey = "like:" + like.getUser().getId() + ":" + like.getUserTargetId();
         likeRedisTemplate.opsForValue().set(redisKey, like, 10, TimeUnit.DAYS);
         User user = like.getUser();
-        User userTarget = like.getUserTarget();
 
-        String reverseRedisKey = "like:" + like.getUserTarget().getId() + ":" + like.getUser().getId();
+        String reverseRedisKey = "like:" + like.getUserTargetId() + ":" + like.getUser().getId();
 
-        if (likeRedisTemplate.hasKey(reverseRedisKey)) {
+        if (isMatch(like)) {
             Map<String, String> responseUserMatch = new HashMap<>();
             responseUserMatch.put("Message", "Match!");
             kafkaTemplate.send(topicName, like);
@@ -51,5 +50,11 @@ public class LikeService {
             responseUserUnMatch.put("Message", "No match now");
             return responseUserUnMatch;
         }
+    }
+
+    public Boolean isMatch(Like like) {
+        String reverseRedisKey = "like:" + like.getUserTargetId() + ":" + like.getUser().getId();
+
+        return likeRedisTemplate.hasKey(reverseRedisKey);
     }
 }

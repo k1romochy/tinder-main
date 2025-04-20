@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.example.demo.security.SecurityUser;
+import com.example.demo.user.Repository.LocationDTO;
 import com.example.demo.user.Repository.User;
 import com.example.demo.user.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("{id}/")
+    @GetMapping("{id:[\\d]+}/")
     public User geUserById(@PathVariable Long id) {
         return userService.findUserById(id);
     }
@@ -32,8 +33,8 @@ public class UserController {
 
     @PostMapping("save-location/")
     public User setUserLocation(@AuthenticationPrincipal SecurityUser securityUser,
-                                @RequestBody double lat, @RequestBody double lon) {
+                                @RequestBody LocationDTO location) {
         Long userId = securityUser.getUser().getId();
-        return userService.saveUserLocation(userId, lat, lon);
+        return userService.saveUserLocation(userId, location.getlat(), location.getlon());
     }
 }

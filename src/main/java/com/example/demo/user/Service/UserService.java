@@ -8,6 +8,7 @@ import com.example.demo.user.Repository.User;
 import com.example.demo.user.Repository.UserRepository;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -49,7 +50,9 @@ public class UserService {
 
     public User saveUserLocation(Long userId, double lat, double lon) {
         User user = findUserById(userId);
-        user.setPoint(geometryFactory.createPoint(new Coordinate(lon, lat)));
+        Point point = geometryFactory.createPoint(new Coordinate(lon, lat));
+        point.setSRID(4326);
+        user.setPoint(point);
         return userRepository.save(user);
     }
 }

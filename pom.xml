@@ -38,7 +38,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+			<version>3.4.4</version>
+		</dependency>
 		<!-- Database -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -57,7 +61,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<!-- JTS Geometry Library -->
 		<dependency>
 			<groupId>org.locationtech.jts</groupId>
@@ -138,7 +141,8 @@
 
 	<repositories>
 		<repository>
-			<id>maven-central</id>
+			<id>central</id>
+			<name>Maven Central Repository</name>
 			<url>https://repo.maven.apache.org/maven2</url>
 		</repository>
 	</repositories>

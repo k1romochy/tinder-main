@@ -33,6 +33,7 @@ public class PreferencesService {
 
     public Preferences savePreferences(Preferences preferences,
                                        SecurityUser securityUser) {
+        preferencesRepository.save(preferences);
         User user = securityUser.getUser();
         preferences.setUser(user);
         user.setPreferences(preferences);

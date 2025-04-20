@@ -61,6 +61,7 @@ public class StackService {
     }
 
     @KafkaListener(topics = "${kafka.topic.preferences}", groupId = "${spring.kafka.consumer.group-id}")
+    @Transactional
     public void getUserStackInTime(Preferences preferences) {
         try {
             User user = preferences.getUser();

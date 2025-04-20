@@ -11,16 +11,18 @@ $$;
 
 CREATE EXTENSION IF NOT EXISTS postgis;
 
+CREATE TYPE gender AS ENUM ('MALE', 'FEMALE', 'OTHER');
+
 CREATE TABLE IF NOT EXISTS preferences (
     id SERIAL PRIMARY KEY,
-    sex VARCHAR(10) NOT NULL,
-    age_min SMALLINT NOT NULL,
-    age_max SMALLINT NOT NULL
+    gender gender NOT NULL,
+    preferred_gender gender NOT NULL,
+    age SMALLINT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS stack (
     id SERIAL PRIMARY KEY,
-    users_matching_id BIGINT[]  -- массив ID пользователей
+    users_matching_id BIGINT[]
 );
 
 CREATE TABLE IF NOT EXISTS stack_matching_data (
@@ -38,6 +40,20 @@ CREATE TABLE IF NOT EXISTS users (
     stack_id BIGINT UNIQUE,
     stackMatchingData_id BIGINT UNIQUE
 );
+
+CREATE TABLE IF NOT EXISTS likes (
+    id SERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    user_target_id BIGINT NOT NULL,
+    CONSTRAINT fk_like_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_like_user_target_id ON "like" (user_target_id);
+
+ALTER TABLE "like"
+    ADD CONSTRAINT fk_like_user_target FOREIGN KEY (user_target_id) REFERENCES users(id) ON DELETE CASCADE;
+
+CREATE UNIQUE INDEX IF NOT EXISTS uq_like_pair ON "like" (user_id, user_target_id);
 
 ALTER TABLE users
     ADD CONSTRAINT fk_preferences FOREIGN KEY (preferences_id) REFERENCES preferences(id) ON DELETE CASCADE;

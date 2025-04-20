@@ -21,14 +21,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT * FROM users WHERE email = :identifier OR name = :identifier", nativeQuery = true)
     Optional<User> findByEmailOrName(@Param("identifier") String identifier);
 
-    @Query("SELECT u FROM User u " +
-            "JOIN u.preferences up " +
-            "JOIN Preferences cp ON cp.user.id = :currentUserId " +
-            "WHERE u.id != :currentUserId " +
-            "AND up.age BETWEEN :minAge AND :maxAge " +
-            "AND up.gender = cp.preferredGender " +
-            "AND cp.gender = up.preferredGender " +
-            "ORDER BY ST_Distance(u.point, :point) ASC")
+    @Query("""
+    SELECT u FROM User u
+    JOIN u.preferences up
+    JOIN Preferences cp ON cp.user.id = :currentUserId
+    WHERE u.id != :currentUserId
+      AND up.age BETWEEN :minAge AND :maxAge
+      AND up.gender = cp.preferredGender
+      AND cp.gender = up.preferredGender
+      AND ST_Distance(u.point, :point) <= 10000
+    ORDER BY ST_Distance(u.point, :point) ASC
+    """)
     List<User> findCompatibleNearbyUsers(
             @Param("currentUserId") Long currentUserId,
             @Param("point") Point point,

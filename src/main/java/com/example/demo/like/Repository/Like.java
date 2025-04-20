@@ -4,7 +4,7 @@ import com.example.demo.user.Repository.User;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "like")
+@Table(name = "likes")
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,14 +14,14 @@ public class Like {
     @JoinColumn(name = "user_id" , referencedColumnName = "id", nullable = false)
     private User user;
 
-    private User userTarget;
+    private Long userTargetId;
 
     public Like() {}
 
-    public Like(Long id, User user, User userTarget) {
+    public Like(Long id, User user, Long userTargetId) {
         this.id = id;
         this.user = user;
-        this.userTarget = userTarget;
+        this.userTargetId = userTargetId;
     }
 
     public Long getId() {
@@ -40,11 +40,11 @@ public class Like {
         this.user = user;
     }
 
-    public User getUserTarget() {
-        return userTarget;
+    public Long getUserTargetId() {
+        return userTargetId;
     }
 
-    public void setUserTarget(User userTarget) {
-        this.userTarget = userTarget;
+    public void setUserTarget(Long userTargetId) {
+        this.userTargetId = userTargetId;
     }
 }
