@@ -3,9 +3,11 @@ package com.example.demo.like.Repository;
 import com.example.demo.user.Repository.User;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "likes")
-public class Like {
+public class Like implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,6 +17,8 @@ public class Like {
     private User user;
 
     private Long userTargetId;
+
+    private boolean match = false;
 
     public Like() {}
 
@@ -46,5 +50,13 @@ public class Like {
 
     public void setUserTarget(Long userTargetId) {
         this.userTargetId = userTargetId;
+    }
+
+    public void setMatch(boolean match) {
+        this.match = match;
+    }
+
+    public boolean getMatch() {
+        return match;
     }
 }

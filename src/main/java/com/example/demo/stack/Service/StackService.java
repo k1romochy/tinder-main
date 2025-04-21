@@ -23,6 +23,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import com.example.demo.preferences.Repository.Preferences;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -123,6 +124,17 @@ public class StackService {
             stackRedisTemplate.opsForValue().set(key, stack);
             stackRepository.save(stack);
             stackMatchingDataRepository.delete(matchingData);
+        }
+    }
+
+    public List<Long> getSuitableUsersById(Long id) {
+        String redisKey = "UserStack:" + id.toString();
+        Stack stack = stackRedisTemplate.opsForValue().get(redisKey);
+        if (stack!=null) {
+            return stack.getUsersMatchingID();
+        }
+        else {
+            return Collections.emptyList();
         }
     }
 }
