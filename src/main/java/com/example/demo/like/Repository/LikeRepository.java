@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LikeRepository extends JpaRepository<Like, Long> {
     @Query(value = """
@@ -17,4 +18,7 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     WHERE l.match = true
    \s""", nativeQuery = true)
     List<User> findMatchedUsers(@Param("userId") Long userId);
+
+    @Query(value = "SELECT * FROM likes WHERE user_id = :targetId AND user_target_id = :userId", nativeQuery = true)
+    Optional<Like> findReverseLike(@Param("userId") Long userId, @Param("targetId") Long targetId);
 }

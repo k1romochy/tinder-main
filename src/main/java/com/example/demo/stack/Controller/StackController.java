@@ -1,10 +1,12 @@
 package com.example.demo.stack.Controller;
 
 import com.example.demo.like.Repository.Like;
+import com.example.demo.like.Repository.LikeDTO;
 import com.example.demo.like.Service.LikeService;
 import com.example.demo.security.SecurityUser;
 import com.example.demo.stack.Service.StackService;
 import com.example.demo.user.Repository.User;
+import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +31,9 @@ public class StackController {
     }
 
     @PostMapping("like/")
-    public Map<String, String> handleLike(@RequestParam Long userTargetId,
+    public Map<String, String> handleLike(@Valid @RequestBody LikeDTO likeDTO,
                                           @AuthenticationPrincipal SecurityUser securityUser) {
+        Long userTargetId = likeDTO.getUserTargetId();
         User user = securityUser.getUser();
         Like like = new Like();
         like.setUser(user);

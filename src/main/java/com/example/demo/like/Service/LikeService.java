@@ -4,8 +4,10 @@ import com.example.demo.like.Repository.Like;
 import com.example.demo.like.Repository.LikeRepository;
 import com.example.demo.notification.Notification;
 import com.example.demo.user.Repository.User;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -89,5 +92,24 @@ public class LikeService {
 
     public List<User> getMatchedById(Long id) {
         return likeRepository.findMatchedUsers(id);
+    }
+
+    @Transactional
+    @KafkaListener(topics = "${kafka.topic.match}", groupId = "${spring.kafka.consumer.group-id}")
+    public String handleMatch(Like like) {
+        Long userId = like.getUser().getId();
+        Long userTargetId = like.getUserTargetId();
+
+        like.setMatch(true);
+        likeRepository.save(like)
+
+        Optional<Like> targetLike = likeRepository.findReverseLike(userId, userTargetId);
+
+        if (targetLike.isPresent()) {
+            Like tLike = targetLike.get();
+            tLike.setMatch(true);
+            likeRepository.save(tLike);
+        }
+        return "Succesfull";
     }
 }
