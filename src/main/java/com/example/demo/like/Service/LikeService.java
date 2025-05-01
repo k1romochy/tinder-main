@@ -101,7 +101,7 @@ public class LikeService {
         Long userTargetId = like.getUserTargetId();
 
         like.setMatch(true);
-        likeRepository.save(like)
+        likeRepository.save(like);
 
         Optional<Like> targetLike = likeRepository.findReverseLike(userId, userTargetId);
 
